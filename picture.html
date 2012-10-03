@@ -32,12 +32,12 @@
     </style>
 
     <script>
-      // リスト用のグローバル変数
-      var list = "";
+      var success_flg = true;
 
       window.onload = function() {
         // 画像をドロップした時にファイル情報を表示させる関数
         function handleFileSelect(evt) {
+          success_flg = true;
           document.getElementById("result").innerHTML = "";
           evt.stopPropagation();
           evt.preventDefault();
@@ -83,9 +83,17 @@
                     td_tag2.innerHTML = file.name;
                     tr_tag.appendChild(td_tag3);
                     td_tag3.innerHTML = check_result;
+
+                    success_flg = false;
                   }
 
+                  if (success_flg) {
+                    document.getElementById("notice").innerHTML = "オッケー！";
+                  } else {
+                    document.getElementById("notice").innerHTML = "";
+                  }
                 });
+
 
                 // オブジェクトを破棄する
                 delete image;
@@ -98,9 +106,6 @@
             delete reader;
           }
 
-          if (list == "") {
-            document.getElementById("notice").innerHTML = "オッケー！";
-          } 
         }
 
         // 画像サイズの比較
