@@ -38,7 +38,8 @@
         // 画像をドロップした時にファイル情報を表示させる関数
         function handleFileSelect(evt) {
           success_flg = true;
-          document.getElementById("result").innerHTML = "";
+          document.getElementById("result").innerHTML  = "";
+          document.getElementById("catalog").innerHTML = "";
           evt.stopPropagation();
           evt.preventDefault();
 
@@ -78,22 +79,25 @@
 
                     // trの子要素tdを追加
                     tr_tag.appendChild(td_tag1);
-                    td_tag1.innerHTML = "<img src='" + image.src + "' width='" + checked_width + "' height='" + checked_height + "' />";
+                    td_tag1.innerHTML = "<img src='" + image.src + "' width='" + checked_width + "' height='" +
+                      checked_height + "' alt='" + file.name + "' />";
                     tr_tag.appendChild(td_tag2);
                     td_tag2.innerHTML = file.name;
                     tr_tag.appendChild(td_tag3);
                     td_tag3.innerHTML = check_result;
 
                     success_flg = false;
+                  } else {
+                    document.getElementById("catalog").innerHTML += "<img src='" + image.src + "' width='" +
+                      checked_width + "' height='" + checked_height + "' alt='" + file.name + "' />";
                   }
 
                   if (success_flg) {
-                    document.getElementById("notice").innerHTML = "オッケー！";
+                    document.getElementById("notice").innerHTML = "全て正しいサイズです、おめでとう！";
                   } else {
                     document.getElementById("notice").innerHTML = "";
                   }
                 });
-
 
                 // オブジェクトを破棄する
                 delete image;
@@ -190,5 +194,7 @@
     <div id="drop_zone">ここにファイルをドラッグ＆ドロップして下さい</div>
     <div id="notice"></div>
     <table id="result"></table>
+    <hr />
+    <div id="catalog"></div>
   </body>
 </html>
