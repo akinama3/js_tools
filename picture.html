@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>画像サイズチェッカ</title>
+
+    <style>
+      .unmatched {
+        color: #F00;
+      }
+
+      #input_image_size {
+        text-align: left;
+        padding: 10px;
+        margin:  10px;
+      }
+
+      #drop_zone {
+        border: 2px dashed #bbb;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        border-radius: 5px;
+        padding: 25px;
+        text-align: center;
+        font: 20pt bold;
+        color: #bbb;
+      }
+    </style>
+
+    <script>
+      var list = "";
+      window.onload = function() {
+        // 画像をドロップした時にファイル情報を表示させる関数
+        function handleFileSelect(evt) {
+          evt.stopPropagation();
+          evt.preventDefault();
+
+          // 取得したファイルの作成
+          var files  = evt.dataTransfer.files;
+
+          // 1つずつファイル情報を取得する処理
+          for (var i = 0, f; f = files[i]; i++) {
+            // FileReaderオブジェクトの作成
+            var reader = new FileReader;
+
+            // 画像情報を取得するクロージャ
+            reader.onload = (function(file) {
+              return function(e) {
+                // 調べるwidth, heightを取得する
+                var checked_width  = document.getElementById("checked_width").value;
+                var checked_height = document.getElementById("checked_height").value; 
+
+                // 画像ファイルを読み込む
+                var image  = new Image();
+                image.src = e.target.result;
+
+                image.onload = (function() {
+                  // 画像ファイルを比較する
+                  var check_result = checkImageSize(image, checked_width, checked_height);
+
+                  // リストを作成する
+                  if (check_result != "") {
+                    list += "<tr>" + "<td><img src='" + image.src + "' width=" + checked_width + " height=" + checked_height + " /></td><td>" +
+                      file.name + "</td><td> " + check_result + "</td>";
+                  }
+
+                  // DOMの書き換え
+                  document.getElementById("list").innerHTML = list;
+                });
+
+                // オブジェクトを破棄する
+                delete image;
+              };
+            })(f);
+
+            // data URLとして画像ファイルを読み込む
+            reader.readAsDataURL(f);
+          }
+        }
+
+        // 画像サイズの比較
+        function checkImageSize(image, width, height) {
+          alert(image.naturalWidth + image.naturalHeight);
+          // 返り値に使う文字列の初期化
+          str = ""; 
+
+          if (image.naturalWidth == width && image.naturalHeight == height) return str
+
+          // 横サイズをチェックし、cssのclass付けを行う
+          if (image.naturalWidth == width) {
+            str = "<span class='matched'>" + image.width + "</span>";
+          } else {
+            str = "<span class='unmatched'>" + image.width + "</span>";
+          }
+
+          str = str + " x ";
+
+          // 縦サイズをチェックし、cssのclass付けを行う
+          if (image.naturalHeight == height) {
+            str = str + "<span class='matched'>" + image.height + "</span>";
+          } else {
+            str = str + "<span class='unmatched'>" + image.height + "</span>";
+          }
+
+          return str
+        }
+
+        function handleDragOver(evt) {
+          evt.stopPropagation();
+          evt.preventDefault();
+          evt.dataTransfer.dropEffect = 'copy';
+        }
+
+        // ドロップ先要素にイベントリスナを追加する
+        var dropZone = document.getElementById('drop_zone');
+        dropZone.addEventListener('dragover', handleDragOver,   false);
+        dropZone.addEventListener('drop',     handleFileSelect, false);
+
+        // エラーハンドラの定義
+        function errorHandler(e) {
+          // エラーメッセージの初期化
+          var msg = '';
+
+          // エラー内容を選択する
+          switch (e.code) {
+          case FileError.QUOTA_EXCEEDED_ERR:
+            msg = 'QUOTA_EXCEEDED_ERR';
+            break;
+          case FileError.NOT_FOUND_ERR:
+            msg = 'NOT_FOUND_ERR';
+            break;
+          case FileError.SECURITY_ERR:
+            msg = 'SECURITY_ERR';
+            break;
+          case FileError.INVALID_MODIFICATION_ERR:
+            msg = 'INVALID_MODIFICATION_ERR';
+            break;
+          case FileError.INVALID_STATE_ERR:
+            msg = 'INVALID_STATE_ERR';
+            break;
+          default:
+            msg = 'Unknown Error';
+            break;
+          };
+
+          // エラーを表示
+          alert('Error: ' + msg);
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <h1>画像ファイルチェッカ</h1>
+    <hr />
+    <div id="input_image_size">
+      <input id="checked_width"  type="text" value="209" />
+      x
+      <input id="checked_height" type="text" value="475" /><br/>
+    </div>
+    <div id="drop_zone">ここにファイルをドラッグ＆ドロップして下さい</div>
+    <table><output id="list"></output></table>
+  </body>
+</html>
