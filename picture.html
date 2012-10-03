@@ -85,8 +85,6 @@
                     td_tag3.innerHTML = check_result;
                   }
 
-                  // DOMの書き換え
-                  // document.getElementById("list").innerHTML = list;
                 });
 
                 // オブジェクトを破棄する
@@ -99,6 +97,10 @@
 
             delete reader;
           }
+
+          if (list == "") {
+            document.getElementById("notice").innerHTML = "オッケー！";
+          } 
         }
 
         // 画像サイズの比較
@@ -181,6 +183,7 @@
       <input id="checked_height" type="text" value="475" /><br/>
     </div>
     <div id="drop_zone">ここにファイルをドラッグ＆ドロップして下さい</div>
+    <div id="notice"></div>
     <table id="result"></table>
   </body>
 </html>
