@@ -9,6 +9,10 @@
         color: #F00;
       }
 
+      .td {
+        vertical-align: middle;
+      }
+
       #input_image_size {
         text-align: left;
         padding: 10px;
@@ -28,10 +32,13 @@
     </style>
 
     <script>
+      // リスト用のグローバル変数
       var list = "";
+
       window.onload = function() {
         // 画像をドロップした時にファイル情報を表示させる関数
         function handleFileSelect(evt) {
+          document.getElementById("result").innerHTML = "";
           evt.stopPropagation();
           evt.preventDefault();
 
@@ -60,12 +67,26 @@
 
                   // リストを作成する
                   if (check_result != "") {
-                    list += "<tr>" + "<td><img src='" + image.src + "' width=" + checked_width + " height=" + checked_height + " /></td><td>" +
-                      file.name + "</td><td> " + check_result + "</td>";
+                    // 子タグ要素の作成
+                    var tr_tag  = document.createElement("tr");
+                    var td_tag1 = document.createElement("td");
+                    var td_tag2 = document.createElement("td");
+                    var td_tag3 = document.createElement("td");
+
+                    // tableの子要素にtrを追加
+                    document.getElementById("result").appendChild(tr_tag);
+
+                    // trの子要素tdを追加
+                    tr_tag.appendChild(td_tag1);
+                    td_tag1.innerHTML = "<img src='" + image.src + "' width='" + checked_width + "' height='" + checked_height + "' />";
+                    tr_tag.appendChild(td_tag2);
+                    td_tag2.innerHTML = file.name;
+                    tr_tag.appendChild(td_tag3);
+                    td_tag3.innerHTML = check_result;
                   }
 
                   // DOMの書き換え
-                  document.getElementById("list").innerHTML = list;
+                  // document.getElementById("list").innerHTML = list;
                 });
 
                 // オブジェクトを破棄する
@@ -75,12 +96,13 @@
 
             // data URLとして画像ファイルを読み込む
             reader.readAsDataURL(f);
+
+            delete reader;
           }
         }
 
         // 画像サイズの比較
         function checkImageSize(image, width, height) {
-          alert(image.naturalWidth + image.naturalHeight);
           // 返り値に使う文字列の初期化
           str = ""; 
 
@@ -159,6 +181,6 @@
       <input id="checked_height" type="text" value="475" /><br/>
     </div>
     <div id="drop_zone">ここにファイルをドラッグ＆ドロップして下さい</div>
-    <table><output id="list"></output></table>
+    <table id="result"></table>
   </body>
 </html>
